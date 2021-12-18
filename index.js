@@ -15,10 +15,12 @@ app.get('/people', async (req, res) => {
   try {
     const isInCache = await redisClient.hasItem(personId); // return 0 or 1
     if (isInCache) {
+      console.log(`Cache Hit, ${personId} is in cache`);
       const reply = await redisClient.getItem(personId);
       const parsedReply = JSON.parse(reply);
       res.status(200).send({ person: parsedReply, message: 'retrieved from cache' });
     } else {
+      console.log(`Cache Miss, ${personId} is not in cache`);
       const person = await axios.get(url);
       await redisClient.setItem(personId, person.data, 3600);
       res.status(200).send({ person: person.data, message: 'cache missed' });
