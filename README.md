@@ -6,7 +6,7 @@
 - clone and `cd` to the repo directory
 - run `npm i`
 - run redis `redis-server`
-- run the nodejs server `npm start`
+- in a new terminal, run the nodejs server `npm start` or `npm run dev`
 
 - try to get data on `localhost:3000`
 
