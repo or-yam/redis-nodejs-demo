@@ -9,27 +9,27 @@ const app = express();
 const redisClient = createRedisClient();
 
 app.get('/people', async (req, res) => {
+  console.time('GET /people ⏳');
   const { personId } = req.query;
   const url = `${BASE_API_URL}${personId}`;
 
   try {
-    const isInCache = await redisClient.hasItem(personId); // return 0 or 1
+    const isInCache = await redisClient.hasItem(personId);
     if (isInCache) {
-      console.log(`Cache Hit, ${personId} is in cache`);
-      const reply = await redisClient.getItem(personId);
-      const parsedReply = JSON.parse(reply);
-      res.status(200).send({ person: parsedReply, message: 'retrieved from cache' });
+      const personData = await redisClient.getItem(personId);
+      res.status(200).send(personData);
     } else {
-      console.log(`Cache Miss, ${personId} is not in cache`);
+      console.log(`🔍 Fetching person: ${personId} from API`);
       const person = await axios.get(url);
-      await redisClient.setItem(personId, person.data, 3600);
-      res.status(200).send({ person: person.data, message: 'cache missed' });
+      redisClient.setItem(personId, person.data); // default ttl is 60 seconds
+      res.status(200).send(person.data);
     }
   } catch (err) {
     res.status(500).send({ message: err.message });
   }
+  console.timeEnd('GET /people ⏳');
 });
 
 app.listen(PORT, () => {
-  console.log(`Server started on port ${PORT}`);
+  console.log(`🟢 Server started on port ${PORT}`);
 });
