@@ -26,8 +26,9 @@ app.get('/people', async (req, res) => {
     }
   } catch (err) {
     res.status(500).send({ message: err.message });
-  }
+  }  
   console.timeEnd('GET /people ⏳');
+  console.log('⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯')
 });
 
 app.listen(PORT, () => {
